@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  base: &base
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_DIR: ${USER_DIR}
+        PYTHONPATH: ${PYTHONPATH}
+    volumes:
+      - ${HOST_DIR}:${VIRTUAL_DIR}:ro # read-only for the parent directory
+      - ${HOST_DIR}/results:${VIRTUAL_DIR}/results
+      - ${HOST_DIR}/experiments:${VIRTUAL_DIR}/experiments
+    tty: true # to keep container running
+    stdin_open: true # to allow interactive mode
+
+  notebook:
+    <<: *base
+    container_name: slnotebook
+    ports:
+      - "8888:8888"
+    command: >
+      bash -c
+      "cd sl-leaf/experiments && 
+      jupyter notebook --ip 0.0.0.0 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''"
+
+  app:
+    <<: *base
+    container_name: slapp
+    command: >
+      bash -c
+      "python ${VIRTUAL_DIR}/experiments/main.py"
