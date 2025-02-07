@@ -1,4 +1,4 @@
-# sl-leaf
+# Strategic Learning with Local Explanations as Feedback
 
 For dependencies and packages, see `localenv/Dockerfile` and `localenv/requirements`.
 
